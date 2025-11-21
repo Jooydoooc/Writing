@@ -1,0 +1,19 @@
+{
+  "name": "ielts-writing-multi-set",
+  "version": "1.0.0",
+  "description": "Online IELTS Writing Answer Sheet with Multiple Sets",
+  "type": "module",
+  "scripts": {
+    "dev": "vc dev",
+    "build": "echo 'No build step required for static site'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vercel/node": "^2.0.0"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "author": "IELTS Writing System",
+  "license": "MIT"
+}
