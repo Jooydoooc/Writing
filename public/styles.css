@@ -1,0 +1,445 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    line-height: 1.6;
+    background-color: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* Screen Management */
+.screen {
+    display: none;
+    min-height: 100vh;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Main Menu Styles */
+.menu-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.menu-header h1 {
+    color: #2c5aa0;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.menu-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.sets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.set-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid #2c5aa0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.set-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.set-card h3 {
+    color: #2c5aa0;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.set-card p {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.set-card .set-id {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+.start-set-btn {
+    width: 100%;
+    padding: 12px;
+    background: #2c5aa0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.start-set-btn:hover {
+    background: #1e3d6f;
+}
+
+.menu-footer {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* Writing Interface Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Top Bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.student-info input {
+    font-family: "Times New Roman", serif;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.set-info {
+    padding: 8px 12px;
+    background: #e9ecef;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #495057;
+}
+
+.timer-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#timerDisplay {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c5aa0;
+    min-width: 100px;
+    text-align: center;
+}
+
+/* Navigation */
+.navigation {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.nav-btn {
+    padding: 12px 24px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.nav-btn.active {
+    background: #2c5aa0;
+    color: white;
+    border-color: #2c5aa0;
+}
+
+/* Task Screens */
+.task-screen {
+    display: none;
+}
+
+.task-screen.active {
+    display: block;
+}
+
+/* Two Column Layout */
+.two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.left-column, .right-column {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #2c5aa0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 10px;
+}
+
+/* Question and Answer Areas */
+.question-area {
+    margin-bottom: 20px;
+}
+
+.question-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.question-text {
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+.answer-text {
+    font-family: "Times New Roman", serif;
+    width: 100%;
+    min-height: 400px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.5;
+    resize: vertical;
+    background-color: #fafafa;
+}
+
+.answer-text:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+.answer-text:not(:disabled) {
+    background-color: white;
+}
+
+/* Word Count */
+.word-count {
+    margin-top: 15px;
+    text-align: right;
+    color: #666;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Submit Section */
+.submit-section {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #eaeaea;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #2c5aa0;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #1e3d6f;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #545b62;
+}
+
+.btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.modal h3 {
+    margin-bottom: 15px;
+    color: #2c5aa0;
+}
+
+.modal p {
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.modal-buttons .btn {
+    min-width: 100px;
+}
+
+.modal input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #dc3545;
+    margin-bottom: 15px;
+    min-height: 20px;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .two-column-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .top-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .student-info {
+        justify-content: center;
+    }
+    
+    .timer-section {
+        justify-content: center;
+    }
+    
+    .navigation {
+        justify-content: center;
+    }
+    
+    .modal-content {
+        margin: 20% auto;
+        padding: 20px;
+    }
+    
+    .menu-container {
+        padding: 20px 15px;
+    }
+    
+    .sets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .menu-header h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Success State */
+.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+/* Adjustable space between columns */
+.column-gap-control {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.column-gap-control input {
+    width: 80px;
+}
