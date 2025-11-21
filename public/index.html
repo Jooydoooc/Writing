@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Writing - Test Sets</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Menu Screen -->
+    <div id="mainMenu" class="screen active">
+        <div class="menu-container">
+            <header class="menu-header">
+                <h1>IELTS Writing – Test Sets</h1>
+                <p>Select a test set and enter the access code to begin</p>
+            </header>
+
+            <div class="sets-grid" id="setsContainer">
+                <!-- Sets will be dynamically generated -->
+            </div>
+
+            <div class="menu-footer">
+                <p>Each set requires a unique access code provided by your instructor</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Writing Interface Screen -->
+    <div id="writingInterface" class="screen">
+        <div class="container">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="student-info">
+                    <input type="text" id="studentName" placeholder="Student Name" required>
+                    <input type="text" id="studentSurname" placeholder="Student Surname" required>
+                    <div class="set-info" id="currentSetInfo"></div>
+                </div>
+                <div class="timer-section">
+                    <div id="timerDisplay">00:00:00</div>
+                    <button id="startTestBtn" class="btn btn-primary">Start Test</button>
+                    <button id="backToMenuBtn" class="btn btn-secondary">Back to Menu</button>
+                </div>
+            </header>
+
+            <!-- Navigation -->
+            <nav class="navigation">
+                <button id="task1Btn" class="nav-btn active">Task 1</button>
+                <button id="task2Btn" class="nav-btn">Task 2</button>
+            </nav>
+
+            <!-- Task 1 Screen -->
+            <div id="task1Screen" class="task-screen active">
+                <div class="two-column-layout">
+                    <div class="left-column">
+                        <h2>Task 1 Question</h2>
+                        <div class="question-area">
+                            <div id="task1ImageContainer"></div>
+                            <div id="task1QuestionText" class="question-text"></div>
+                        </div>
+                    </div>
+
+                    <div class="right-column">
+                        <h2>Task 1 Answer</h2>
+                        <textarea id="task1Answer" placeholder="Write your Task 1 answer here..." class="answer-text" disabled></textarea>
+                        <div class="word-count">Words: <span id="task1WordCount">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 2 Screen -->
+            <div id="task2Screen" class="task-screen">
+                <div class="two-column-layout">
+                    <div class="left-column">
+                        <h2>Task 2 Question</h2>
+                        <div class="question-area">
+                            <div id="task2ImageContainer"></div>
+                            <div id="task2QuestionText" class="question-text"></div>
+                        </div>
+                    </div>
+
+                    <div class="right-column">
+                        <h2>Task 2 Answer</h2>
+                        <textarea id="task2Answer" placeholder="Write your Task 2 answer here..." class="answer-text" disabled></textarea>
+                        <div class="word-count">Words: <span id="task2WordCount">0</span></div>
+                    </div>
+                </div>
+                
+                <div class="submit-section">
+                    <button id="submitTest" class="btn btn-primary" disabled>Submit Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Code Modal -->
+    <div id="accessCodeModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalSetTitle">Enter Access Code</h3>
+            <p>Please enter the access code for this test set:</p>
+            <input type="text" id="accessCodeInput" placeholder="Enter code..." autocomplete="off">
+            <p id="accessCodeError" class="error-message"></p>
+            <div class="modal-buttons">
+                <button id="confirmCodeBtn" class="btn btn-primary">Confirm</button>
+                <button id="cancelCodeBtn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Modal -->
+    <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <h3>Warning</h3>
+            <p>You have left the test page. If you leave again, your answers will be cleared and the test will be restarted.</p>
+            <button id="modalOkBtn" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <h3 id="messageTitle">Message</h3>
+            <p id="messageText"></p>
+            <button id="messageOkBtn" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Action</h3>
+            <p id="confirmText">If you go back, your current answers and timer will be cleared.</p>
+            <div class="modal-buttons">
+                <button id="confirmYesBtn" class="btn btn-primary">Yes, Go Back</button>
+                <button id="confirmNoBtn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
