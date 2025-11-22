@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    // Set CORS headers
+    // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -9,7 +9,6 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    // Only POST allowed
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -17,7 +16,7 @@ export default async function handler(req, res) {
     try {
         const data = req.body;
 
-        // Validate
+        // Validation
         if (!data.studentName || !data.studentSurname) {
             return res.status(400).json({ 
                 success: false, 
@@ -25,39 +24,45 @@ export default async function handler(req, res) {
             });
         }
 
-        // Telegram setup
+        // Telegram configuration
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
         const chatId = process.env.TELEGRAM_CHAT_ID;
 
         if (!botToken || !chatId) {
-            console.log('Missing Telegram config');
+            console.error('Telegram environment variables not set');
             return res.status(500).json({ 
                 success: false, 
                 error: 'Server configuration error' 
             });
         }
 
-        // Create message
+        // Format message
         const message = `
-🎓 *IELTS Writing Submission*
+🎓 *IELTS Writing Pro - New Submission*
 
 *Student:* ${data.studentName} ${data.studentSurname}
-*Time:* ${data.timerValue}
-*Submitted:* ${new Date().toLocaleString()}
+*Duration:* ${data.timerValue}
+*Submitted:* ${new Date(data.submittedAt).toLocaleString()}
+
+━━━━━━━━━━━━━━━━━━━━
 
 *Task 1 Question:*
 ${data.task1Question}
 
 *Task 1 Answer:*
-${data.task1Answer || 'No answer'}
-Words: ${data.task1Answer ? data.task1Answer.split(/\s+/).length : 0}
+${data.task1Answer || 'No answer provided'}
+*Words:* ${data.task1Answer ? data.task1Answer.split(/\s+/).length : 0}
+
+━━━━━━━━━━━━━━━━━━━━
 
 *Task 2 Question:*
 ${data.task2Question}
 
 *Task 2 Answer:*
-${data.task2Answer || 'No answer'}
-Words: ${data.task2Answer ? data.task2Answer.split(/\s+/).length : 0}
+${data.task2Answer || 'No answer provided'}
+*Words:* ${data.task2Answer ? data.task2Answer.split(/\s+/).length : 0}
+
+━━━━━━━━━━━━━━━━━━━━
 
 *Total Words:* ${(data.task1Answer ? data.task1Answer.split(/\s+/).length : 0) + (data.task2Answer ? data.task2Answer.split(/\s+/).length : 0)}
         `.trim();
@@ -78,13 +83,14 @@ Words: ${data.task2Answer ? data.task2Answer.split(/\s+/).length : 0}
         const result = await telegramResponse.json();
 
         if (!result.ok) {
-            throw new Error(result.description);
+            throw new Error(`Telegram API: ${result.description}`);
         }
 
-        // Success
+        // Success response
         return res.status(200).json({
             success: true,
-            message: 'Test submitted successfully'
+            message: 'Test submitted successfully',
+            messageId: result.result.message_id
         });
 
     } catch (error) {
