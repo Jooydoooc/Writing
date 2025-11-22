@@ -3,171 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Writing Test</title>
+    <title>IELTS Writing Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Animated Intro Theme -->
+    <div id="introScreen" class="screen active">
+        <div class="intro-background">
+            <div class="intro-content">
+                <div class="logo">IELTS</div>
+                <h1 class="intro-title">Writing Excellence Portal</h1>
+                <p class="intro-quote">"The art of writing is the art of discovering what you believe."</p>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <p class="intro-subtitle">Preparing your test environment...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Screen -->
-    <div id="loginScreen" class="screen active">
-        <div class="container">
-            <div class="login-box">
-                <h1>IELTS Writing Test</h1>
-                <p>Enter your details to begin</p>
-                
-                <div class="input-group">
-                    <label>Your Name:</label>
-                    <input type="text" id="studentName" placeholder="Enter your name">
+    <div id="loginScreen" class="screen">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>Welcome Back</h1>
+                    <p>Enter your details to continue</p>
                 </div>
                 
-                <div class="input-group">
-                    <label>Your Surname:</label>
-                    <input type="text" id="studentSurname" placeholder="Enter your surname">
+                <div class="login-form">
+                    <div class="input-group">
+                        <input type="text" id="studentName" placeholder=" " required>
+                        <label>First Name</label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="text" id="studentSurname" placeholder=" " required>
+                        <label>Last Name</label>
+                    </div>
+                    
+                    <button id="loginBtn" class="btn btn-primary">
+                        <span>Enter Test Portal</span>
+                        <div class="btn-loader"></div>
+                    </button>
                 </div>
-                
-                <button id="loginBtn" class="btn btn-primary">Start Test</button>
             </div>
         </div>
     </div>
 
     <!-- Main Menu -->
     <div id="menuScreen" class="screen">
-        <div class="container">
-            <div class="menu-header">
-                <h1>Welcome, <span id="userName">Student</span></h1>
-                <p>Choose a test set to begin</p>
-            </div>
+        <div class="menu-container">
+            <header class="menu-header">
+                <h1>Writing Test Sets</h1>
+                <p>Welcome, <span id="userName">Student</span></p>
+            </header>
             
-            <div class="sets-grid">
-                <div class="set-card" data-set="1">
-                    <h3>Set 1 - Film Production & Family History</h3>
-                    <p>📊 Task 1: Film production charts</p>
-                    <p>📝 Task 2: Family history discussion</p>
-                    <button class="btn btn-primary start-btn">Start Set 1</button>
-                </div>
-                
-                <div class="set-card coming-soon">
-                    <h3>Set 2 - Coming Soon</h3>
-                    <p>🔒 This set is under development</p>
-                    <button class="btn btn-secondary" disabled>Coming Soon</button>
-                </div>
-                
-                <div class="set-card coming-soon">
-                    <h3>Set 3 - Coming Soon</h3>
-                    <p>🔒 This set is under development</p>
-                    <button class="btn btn-secondary" disabled>Coming Soon</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Access Code Screen -->
-    <div id="codeScreen" class="screen">
-        <div class="container">
-            <div class="code-box">
-                <h2>Enter Access Code</h2>
-                <p>For <span id="setName">Set 1</span></p>
-                
-                <div class="input-group">
-                    <input type="password" id="accessCode" placeholder="Enter access code">
-                </div>
-                
-                <p id="codeError" class="error"></p>
-                
-                <div class="button-group">
-                    <button id="submitCode" class="btn btn-primary">Submit Code</button>
-                    <button id="backToMenu" class="btn btn-secondary">Back to Menu</button>
-                </div>
+            <div class="sets-grid" id="setsGrid">
+                <!-- Sets will be dynamically loaded -->
             </div>
         </div>
     </div>
 
     <!-- Writing Test Screen -->
     <div id="testScreen" class="screen">
-        <div class="container">
-            <!-- Header -->
-            <div class="test-header">
-                <div class="student-info">
-                    <span>Student: <strong id="displayName"></strong></span>
-                    <span>Set: <strong id="displaySet">1</strong></span>
-                </div>
-                <div class="timer-section">
-                    <div class="timer" id="timer">00:00:00</div>
-                    <button id="startTestBtn" class="btn btn-primary">Start Test</button>
-                </div>
-            </div>
-
-            <!-- Navigation -->
-            <div class="test-nav">
-                <button class="nav-btn active" data-task="1">Task 1</button>
-                <button class="nav-btn" data-task="2">Task 2</button>
-            </div>
-
-            <!-- Task 1 Content -->
-            <div id="task1Content" class="task-content active">
-                <div class="columns">
-                    <div class="question-column">
-                        <h3>Task 1 Question</h3>
-                        <div class="question-box">
-                            <p><strong>The charts below show the number of films produced by five countries in three years.</strong></p>
-                            <div class="chart-placeholder">
-                                📊 Film Production Chart (2007-2009)
-                                <br>Countries: A, B, C, D, E
-                                <br>Years: 2007, 2008, 2009
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="answer-column">
-                        <h3>Your Answer</h3>
-                        <div class="answer-box">
-                            <textarea id="task1Answer" placeholder="Write your Task 1 answer here..." disabled></textarea>
-                            <div class="word-count">Words: <span id="task1Words">0</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Task 2 Content -->
-            <div id="task2Content" class="task-content">
-                <div class="columns">
-                    <div class="question-column">
-                        <h3>Task 2 Question</h3>
-                        <div class="question-box">
-                            <p><strong>It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?</strong></p>
-                        </div>
-                    </div>
-                    
-                    <div class="answer-column">
-                        <h3>Your Answer</h3>
-                        <div class="answer-box">
-                            <textarea id="task2Answer" placeholder="Write your Task 2 answer here..." disabled></textarea>
-                            <div class="word-count">Words: <span id="task2Words">0</span></div>
-                        </div>
+        <div class="test-container">
+            <!-- Header Bar -->
+            <header class="test-header">
+                <div class="header-left">
+                    <div class="student-badge">
+                        <span id="displayName">Student Name</span>
+                        <span class="set-badge" id="displaySet">Set 1</span>
                     </div>
                 </div>
                 
-                <div class="submit-section">
-                    <button id="submitBtn" class="btn btn-primary" disabled>Submit Test</button>
-                    <button id="backToMenuTest" class="btn btn-secondary">Back to Menu</button>
+                <div class="header-center">
+                    <div class="timer" id="timer">00:00:00</div>
                 </div>
+                
+                <div class="header-right">
+                    <button id="startTestBtn" class="btn btn-start">Start Test</button>
+                    <button id="menuBtn" class="btn btn-secondary">Menu</button>
+                </div>
+            </header>
+
+            <!-- Task Navigation -->
+            <nav class="task-nav">
+                <button class="task-tab active" data-task="1">
+                    <span class="task-number">01</span>
+                    <span class="task-label">Writing Task 1</span>
+                </button>
+                <button class="task-tab" data-task="2">
+                    <span class="task-number">02</span>
+                    <span class="task-label">Writing Task 2</span>
+                </button>
+            </nav>
+
+            <!-- Resizable Split Container -->
+            <div class="split-container" id="splitContainer">
+                <div class="split-panel question-panel">
+                    <div class="panel-header">
+                        <h3>Question</h3>
+                    </div>
+                    <div class="panel-content" id="questionContent">
+                        <!-- Dynamic content loaded here -->
+                    </div>
+                </div>
+                
+                <div class="split-divider" id="splitDivider"></div>
+                
+                <div class="split-panel answer-panel">
+                    <div class="panel-header">
+                        <h3>Your Answer</h3>
+                        <div class="word-count">Words: <span id="wordCount">0</span></div>
+                    </div>
+                    <div class="panel-content">
+                        <textarea id="answerText" placeholder="Begin writing your answer here..." disabled></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Footer -->
+            <footer class="test-footer">
+                <button id="prevTask" class="btn btn-secondary" disabled>
+                    ← Previous Task
+                </button>
+                
+                <div class="task-progress">
+                    <span class="current-task">Task 1</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+                
+                <button id="nextTask" class="btn btn-primary">
+                    Next Task →
+                </button>
+                
+                <button id="submitBtn" class="btn btn-submit" disabled>
+                    Submit Test
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Review Screen -->
+    <div id="reviewScreen" class="screen">
+        <div class="review-container">
+            <header class="review-header">
+                <h1>Test Submitted Successfully! 🎉</h1>
+                <p>Time: <span id="finalTime">00:00:00</span> • Submitted: <span id="submitTime"></span></p>
+            </header>
+            
+            <div class="review-content">
+                <div class="review-task" id="reviewTask1">
+                    <h3>Task 1 Review</h3>
+                    <div class="review-answer" id="reviewAnswer1"></div>
+                </div>
+                
+                <div class="review-task" id="reviewTask2">
+                    <h3>Task 2 Review</h3>
+                    <div class="review-answer" id="reviewAnswer2"></div>
+                </div>
+            </div>
+            
+            <div class="review-actions">
+                <button id="newTestBtn" class="btn btn-primary">Start New Test</button>
+                <button id="reviewMenuBtn" class="btn btn-secondary">Back to Menu</button>
             </div>
         </div>
     </div>
 
     <!-- Modals -->
     <div id="warningModal" class="modal">
-        <div class="modal-content">
-            <h3>⚠️ Warning</h3>
-            <p>You left the test page. If you leave again, your test will be reset.</p>
-            <button id="closeWarning" class="btn btn-primary">OK</button>
+        <div class="modal-content warning">
+            <div class="modal-icon">⚠️</div>
+            <h3>Warning: Page Visibility Changed</h3>
+            <p>You have navigated away from the test page. If this happens again, your test will be automatically reset.</p>
+            <button id="closeWarning" class="btn btn-primary">I Understand</button>
         </div>
     </div>
 
-    <div id="messageModal" class="modal">
-        <div class="modal-content">
-            <h3 id="messageTitle">Message</h3>
-            <p id="messageText"></p>
-            <button id="closeMessage" class="btn btn-primary">OK</button>
+    <div id="cheatModal" class="modal">
+        <div class="modal-content cheat">
+            <div class="modal-icon">🚨</div>
+            <h3>Unusual Typing Pattern Detected</h3>
+            <p>Your typing speed exceeds normal limits. Please maintain a natural writing pace.</p>
+            <button id="closeCheat" class="btn btn-primary">Continue Writing</button>
         </div>
     </div>
 
