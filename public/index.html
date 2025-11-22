@@ -9,133 +9,146 @@
 <body>
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
-        <div class="login-container">
+        <div class="container">
             <div class="login-box">
                 <h1>IELTS Writing Test</h1>
-                <p>Enter your details to start</p>
+                <p>Enter your details to begin</p>
                 
                 <div class="input-group">
-                    <input type="text" id="studentName" placeholder="Your Name" required>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="studentSurname" placeholder="Your Surname" required>
+                    <label>Your Name:</label>
+                    <input type="text" id="studentName" placeholder="Enter your name">
                 </div>
                 
-                <button id="startButton" class="btn-primary">Start Test</button>
+                <div class="input-group">
+                    <label>Your Surname:</label>
+                    <input type="text" id="studentSurname" placeholder="Enter your surname">
+                </div>
+                
+                <button id="loginBtn" class="btn btn-primary">Start Test</button>
             </div>
         </div>
     </div>
 
     <!-- Main Menu -->
-    <div id="mainMenu" class="screen">
-        <div class="menu-container">
-            <h1>Select Test Set</h1>
-            <p>Welcome, <span id="userNameDisplay"></span></p>
+    <div id="menuScreen" class="screen">
+        <div class="container">
+            <div class="menu-header">
+                <h1>Welcome, <span id="userName">Student</span></h1>
+                <p>Choose a test set to begin</p>
+            </div>
             
-            <div class="sets-list">
-                <div class="set-item active" data-set="set1">
+            <div class="sets-grid">
+                <div class="set-card" data-set="1">
                     <h3>Set 1 - Film Production & Family History</h3>
-                    <p>Available Now</p>
-                    <button class="btn-primary">Start Set 1</button>
+                    <p>📊 Task 1: Film production charts</p>
+                    <p>📝 Task 2: Family history discussion</p>
+                    <button class="btn btn-primary start-btn">Start Set 1</button>
                 </div>
                 
-                <div class="set-item coming-soon" data-set="set2">
+                <div class="set-card coming-soon">
                     <h3>Set 2 - Coming Soon</h3>
-                    <p>Under Development</p>
-                    <button class="btn-secondary" disabled>Coming Soon</button>
+                    <p>🔒 This set is under development</p>
+                    <button class="btn btn-secondary" disabled>Coming Soon</button>
                 </div>
                 
-                <div class="set-item coming-soon" data-set="set3">
+                <div class="set-card coming-soon">
                     <h3>Set 3 - Coming Soon</h3>
-                    <p>Under Development</p>
-                    <button class="btn-secondary" disabled>Coming Soon</button>
+                    <p>🔒 This set is under development</p>
+                    <button class="btn btn-secondary" disabled>Coming Soon</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Access Code Screen -->
-    <div id="accessCodeScreen" class="screen">
-        <div class="access-container">
-            <div class="access-box">
+    <div id="codeScreen" class="screen">
+        <div class="container">
+            <div class="code-box">
                 <h2>Enter Access Code</h2>
-                <p id="setNameDisplay">Set 1 - Film Production & Family History</p>
+                <p>For <span id="setName">Set 1</span></p>
                 
                 <div class="input-group">
-                    <input type="password" id="accessCode" placeholder="Enter access code" required>
+                    <input type="password" id="accessCode" placeholder="Enter access code">
                 </div>
-                <p id="codeError" class="error-message"></p>
+                
+                <p id="codeError" class="error"></p>
                 
                 <div class="button-group">
-                    <button id="submitCode" class="btn-primary">Submit Code</button>
-                    <button id="backToMenu" class="btn-secondary">Back to Menu</button>
+                    <button id="submitCode" class="btn btn-primary">Submit Code</button>
+                    <button id="backToMenu" class="btn btn-secondary">Back to Menu</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Writing Test Screen -->
-    <div id="writingScreen" class="screen">
-        <div class="test-container">
+    <div id="testScreen" class="screen">
+        <div class="container">
             <!-- Header -->
             <div class="test-header">
                 <div class="student-info">
-                    <span id="displayName"></span>
-                    <span id="displaySetName">Set 1</span>
+                    <span>Student: <strong id="displayName"></strong></span>
+                    <span>Set: <strong id="displaySet">1</strong></span>
                 </div>
                 <div class="timer-section">
-                    <div id="timer">00:00:00</div>
-                    <button id="startTimer" class="btn-primary">Start Test</button>
+                    <div class="timer" id="timer">00:00:00</div>
+                    <button id="startTestBtn" class="btn btn-primary">Start Test</button>
                 </div>
             </div>
 
             <!-- Navigation -->
             <div class="test-nav">
-                <button class="nav-btn active" data-task="task1">Task 1</button>
-                <button class="nav-btn" data-task="task2">Task 2</button>
+                <button class="nav-btn active" data-task="1">Task 1</button>
+                <button class="nav-btn" data-task="2">Task 2</button>
             </div>
 
-            <!-- Task 1 -->
-            <div id="task1" class="task-section active">
-                <div class="two-column">
-                    <div class="question-side">
+            <!-- Task 1 Content -->
+            <div id="task1Content" class="task-content active">
+                <div class="columns">
+                    <div class="question-column">
                         <h3>Task 1 Question</h3>
-                        <div class="question-content">
+                        <div class="question-box">
                             <p><strong>The charts below show the number of films produced by five countries in three years.</strong></p>
-                            <div class="image-placeholder">
-                                [Film Production Chart: 2007-2009 data for countries A, B, C, D, E]
+                            <div class="chart-placeholder">
+                                📊 Film Production Chart (2007-2009)
+                                <br>Countries: A, B, C, D, E
+                                <br>Years: 2007, 2008, 2009
                             </div>
                         </div>
                     </div>
                     
-                    <div class="answer-side">
+                    <div class="answer-column">
                         <h3>Your Answer</h3>
-                        <textarea id="task1Answer" placeholder="Write your Task 1 answer here..." disabled></textarea>
-                        <div class="word-count">Words: <span id="task1Words">0</span></div>
+                        <div class="answer-box">
+                            <textarea id="task1Answer" placeholder="Write your Task 1 answer here..." disabled></textarea>
+                            <div class="word-count">Words: <span id="task1Words">0</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Task 2 -->
-            <div id="task2" class="task-section">
-                <div class="two-column">
-                    <div class="question-side">
+            <!-- Task 2 Content -->
+            <div id="task2Content" class="task-content">
+                <div class="columns">
+                    <div class="question-column">
                         <h3>Task 2 Question</h3>
-                        <div class="question-content">
+                        <div class="question-box">
                             <p><strong>It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?</strong></p>
                         </div>
                     </div>
                     
-                    <div class="answer-side">
+                    <div class="answer-column">
                         <h3>Your Answer</h3>
-                        <textarea id="task2Answer" placeholder="Write your Task 2 answer here..." disabled></textarea>
-                        <div class="word-count">Words: <span id="task2Words">0</span></div>
+                        <div class="answer-box">
+                            <textarea id="task2Answer" placeholder="Write your Task 2 answer here..." disabled></textarea>
+                            <div class="word-count">Words: <span id="task2Words">0</span></div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="submit-section">
-                    <button id="submitTest" class="btn-primary" disabled>Submit Test</button>
-                    <button id="backToMenuFromTest" class="btn-secondary">Back to Menu</button>
+                    <button id="submitBtn" class="btn btn-primary" disabled>Submit Test</button>
+                    <button id="backToMenuTest" class="btn btn-secondary">Back to Menu</button>
                 </div>
             </div>
         </div>
@@ -146,7 +159,7 @@
         <div class="modal-content">
             <h3>⚠️ Warning</h3>
             <p>You left the test page. If you leave again, your test will be reset.</p>
-            <button id="closeWarning" class="btn-primary">OK</button>
+            <button id="closeWarning" class="btn btn-primary">OK</button>
         </div>
     </div>
 
@@ -154,7 +167,7 @@
         <div class="modal-content">
             <h3 id="messageTitle">Message</h3>
             <p id="messageText"></p>
-            <button id="closeMessage" class="btn-primary">OK</button>
+            <button id="closeMessage" class="btn btn-primary">OK</button>
         </div>
     </div>
 
