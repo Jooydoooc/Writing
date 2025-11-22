@@ -1,7 +1,7 @@
 {
   "name": "ielts-writing-pro",
   "version": "1.0.0",
-  "description": "Modern IELTS Writing Test System",
+  "description": "Modern IELTS Writing Test Platform",
   "type": "module",
   "scripts": {
     "dev": "vc dev"
@@ -9,6 +9,6 @@
   "engines": {
     "node": "22.x"
   },
-  "author": "IELTS Pro System",
+  "author": "IELTS Writing Pro",
   "license": "MIT"
 }
