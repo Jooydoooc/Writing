@@ -1,66 +1,153 @@
-// IELTS Writing Test Application
-class IELTSApp {
+// Modern IELTS Writing Pro System
+class IELTSProApp {
     constructor() {
-        this.currentScreen = 'login';
+        this.currentScreen = 'intro';
+        this.currentTask = 1;
+        this.currentSet = null;
         this.timer = 0;
         this.timerInterval = null;
         this.isTestStarted = false;
         this.warningShown = false;
         this.studentName = '';
         this.studentSurname = '';
+        this.typingMonitor = {
+            lastKeyTime: 0,
+            keyCount: 0,
+            warningThreshold: 6, // characters per second
+            checkInterval: null
+        };
         
+        this.writingSets = {
+            set1: {
+                name: "Set 1 - Film Production & Family History",
+                code: "versage_100",
+                task1: {
+                    question: "The charts below show the number of films produced by five countries in three years.",
+                    image: "/images/set1-task1.jpg"
+                },
+                task2: {
+                    question: "It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?"
+                }
+            },
+            set2: {
+                name: "Set 2 - Coming Soon",
+                code: "coming_soon",
+                task1: { question: "This set is under development." },
+                task2: { question: "Check back later for new content." }
+            },
+            set3: {
+                name: "Set 3 - Coming Soon", 
+                code: "coming_soon",
+                task1: { question: "This set is under development." },
+                task2: { question: "Check back later for new content." }
+            }
+        };
+
+        this.answers = {
+            task1: '',
+            task2: ''
+        };
+
         this.init();
     }
 
     init() {
         this.bindEvents();
-        this.showScreen('login');
+        this.showScreen('intro');
+        this.startIntroAnimation();
+    }
+
+    startIntroAnimation() {
+        setTimeout(() => {
+            this.showScreen('login');
+        }, 4000);
     }
 
     bindEvents() {
-        // Login screen
+        // Login
         document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
         
-        // Main menu
-        document.querySelectorAll('.start-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const setCard = e.target.closest('.set-card');
-                const setId = setCard.dataset.set;
-                this.showAccessCode(setId);
+        // Enter key in login
+        ['studentName', 'studentSurname'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.handleLogin();
             });
         });
 
-        // Access code screen
-        document.getElementById('submitCode').addEventListener('click', () => this.checkAccessCode());
-        document.getElementById('backToMenu').addEventListener('click', () => this.showScreen('menu'));
-        document.getElementById('accessCode').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.checkAccessCode();
+        // Set selection
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('set-card') && !e.target.classList.contains('coming-soon')) {
+                const setId = e.target.dataset.set || e.target.closest('.set-card').dataset.set;
+                this.showAccessCode(setId);
+            }
         });
 
-        // Test screen
+        // Test controls
         document.getElementById('startTestBtn').addEventListener('click', () => this.startTest());
         document.getElementById('submitBtn').addEventListener('click', () => this.submitTest());
-        document.getElementById('backToMenuTest').addEventListener('click', () => this.goBackToMenu());
+        document.getElementById('menuBtn').addEventListener('click', () => this.confirmExit());
+        document.getElementById('newTestBtn').addEventListener('click', () => this.showScreen('menu'));
+        document.getElementById('reviewMenuBtn').addEventListener('click', () => this.showScreen('menu'));
 
-        // Navigation
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const task = e.target.dataset.task;
-                this.showTask(task);
+        // Task navigation
+        document.querySelectorAll('.task-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const task = parseInt(e.currentTarget.dataset.task);
+                this.switchTask(task);
             });
         });
 
-        // Word count
-        document.getElementById('task1Answer').addEventListener('input', () => this.updateWordCount(1));
-        document.getElementById('task2Answer').addEventListener('input', () => this.updateWordCount(2));
+        document.getElementById('prevTask').addEventListener('click', () => this.previousTask());
+        document.getElementById('nextTask').addEventListener('click', () => this.nextTask());
 
-        // Modals
+        // Answer textarea events
+        const answerText = document.getElementById('answerText');
+        answerText.addEventListener('input', (e) => {
+            this.updateWordCount();
+            this.answers[`task${this.currentTask}`] = e.target.value;
+            this.monitorTypingSpeed();
+        });
+
+        // Anti-copy-paste
+        answerText.addEventListener('copy', (e) => e.preventDefault());
+        answerText.addEventListener('paste', (e) => e.preventDefault());
+        answerText.addEventListener('cut', (e) => e.preventDefault());
+        answerText.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Modal controls
         document.getElementById('closeWarning').addEventListener('click', () => this.hideModal('warningModal'));
-        document.getElementById('closeMessage').addEventListener('click', () => this.hideModal('messageModal'));
+        document.getElementById('closeCheat').addEventListener('click', () => this.hideModal('cheatModal'));
 
-        // Anti-cheating
+        // Split panel resizing
+        this.setupSplitPanel();
+
+        // Anti-cheating visibility
         document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
         window.addEventListener('blur', () => this.handleVisibilityChange());
+
+        // Load sets
+        this.loadSets();
+    }
+
+    loadSets() {
+        const grid = document.getElementById('setsGrid');
+        grid.innerHTML = '';
+
+        Object.entries(this.writingSets).forEach(([key, set], index) => {
+            const isComingSoon = set.code === 'coming_soon';
+            const card = document.createElement('div');
+            card.className = `set-card ${isComingSoon ? 'coming-soon' : ''}`;
+            card.dataset.set = key;
+            
+            card.innerHTML = `
+                <h3>${set.name}</h3>
+                <p>${set.task1.question.substring(0, 80)}...</p>
+                <p>${set.task2.question.substring(0, 80)}...</p>
+                ${isComingSoon ? '<button class="btn btn-secondary" disabled>Coming Soon</button>' : ''}
+            `;
+            
+            grid.appendChild(card);
+        });
     }
 
     handleLogin() {
@@ -68,68 +155,95 @@ class IELTSApp {
         const surname = document.getElementById('studentSurname').value.trim();
 
         if (!name || !surname) {
-            this.showMessage('Error', 'Please enter both your name and surname.');
+            this.showMessage('Please enter both your name and surname.');
             return;
         }
 
         this.studentName = name;
         this.studentSurname = surname;
         
-        document.getElementById('userName').textContent = name + ' ' + surname;
-        document.getElementById('displayName').textContent = name + ' ' + surname;
+        document.getElementById('userName').textContent = `${name} ${surname}`;
+        document.getElementById('displayName').textContent = `${name} ${surname}`;
         
         this.showScreen('menu');
     }
 
     showAccessCode(setId) {
-        if (setId === '1') {
-            document.getElementById('setName').textContent = 'Set 1 - Film Production & Family History';
-            this.showScreen('code');
-            document.getElementById('accessCode').focus();
+        const set = this.writingSets[setId];
+        if (set.code === 'coming_soon') {
+            this.showMessage('This test set is currently under development and will be available soon.');
+            return;
         }
-    }
 
-    checkAccessCode() {
-        const code = document.getElementById('accessCode').value.trim();
-        const errorElement = document.getElementById('codeError');
+        this.currentSet = set;
+        const code = prompt(`Enter access code for ${set.name}:`);
         
-        if (code === 'versage_100') {
-            errorElement.textContent = '';
-            document.getElementById('displaySet').textContent = '1';
+        if (code === set.code) {
+            document.getElementById('displaySet').textContent = setId.replace('set', 'Set ');
             this.showScreen('test');
-            this.resetTest();
-        } else {
-            errorElement.textContent = 'Wrong code! Try: versage_100';
-            document.getElementById('accessCode').focus();
-            document.getElementById('accessCode').select();
+            this.loadTaskContent(1);
+        } else if (code) {
+            alert('Invalid access code. Please try again.');
         }
     }
 
     showScreen(screenName) {
-        // Hide all screens
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
-        
-        // Show target screen
-        document.getElementById(screenName + 'Screen').classList.add('active');
+        document.getElementById(`${screenName}Screen`).classList.add('active');
         this.currentScreen = screenName;
     }
 
-    showTask(taskNumber) {
-        // Hide all tasks
-        document.querySelectorAll('.task-content').forEach(task => {
-            task.classList.remove('active');
-        });
+    loadTaskContent(taskNumber) {
+        const task = this.currentSet[`task${taskNumber}`];
+        const content = document.getElementById('questionContent');
         
-        // Update nav buttons
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        content.innerHTML = `
+            <h4>Writing Task ${taskNumber}</h4>
+            <p>${task.question}</p>
+            ${task.image ? `<img src="${task.image}" alt="Task ${taskNumber} Chart" class="question-image" onerror="this.style.display='none'">` : ''}
+        `;
+
+        // Load saved answer
+        document.getElementById('answerText').value = this.answers[`task${taskNumber}`] || '';
+        this.updateWordCount();
         
-        // Show selected task
-        document.getElementById('task' + taskNumber + 'Content').classList.add('active');
-        document.querySelector(`[data-task="${taskNumber}"]`).classList.add('active');
+        // Update progress
+        this.updateProgress(taskNumber);
+    }
+
+    switchTask(taskNumber) {
+        this.currentTask = taskNumber;
+        document.querySelectorAll('.task-tab').forEach(tab => {
+            tab.classList.toggle('active', parseInt(tab.dataset.task) === taskNumber);
+        });
+        this.loadTaskContent(taskNumber);
+        this.updateNavigation();
+    }
+
+    previousTask() {
+        if (this.currentTask > 1) {
+            this.switchTask(this.currentTask - 1);
+        }
+    }
+
+    nextTask() {
+        if (this.currentTask < 2) {
+            this.switchTask(this.currentTask + 1);
+        }
+    }
+
+    updateNavigation() {
+        document.getElementById('prevTask').disabled = this.currentTask === 1;
+        document.getElementById('nextTask').style.display = this.currentTask === 2 ? 'none' : 'block';
+        document.getElementById('submitBtn').style.display = this.currentTask === 2 ? 'block' : 'none';
+    }
+
+    updateProgress(taskNumber) {
+        const progress = (taskNumber / 2) * 100;
+        document.querySelector('.progress-fill').style.width = `${progress}%`;
+        document.querySelector('.current-task').textContent = `Task ${taskNumber}`;
     }
 
     startTest() {
@@ -137,38 +251,76 @@ class IELTSApp {
         this.warningShown = false;
         
         // Enable writing
-        document.getElementById('task1Answer').disabled = false;
-        document.getElementById('task2Answer').disabled = false;
+        document.getElementById('answerText').disabled = false;
         document.getElementById('submitBtn').disabled = false;
         
-        // Update start button
+        // Update UI
         document.getElementById('startTestBtn').disabled = true;
         document.getElementById('startTestBtn').textContent = 'Test Running';
         
         // Start timer
-        this.timer = 0;
-        this.updateTimer();
-        this.timerInterval = setInterval(() => {
-            this.timer++;
-            this.updateTimer();
-        }, 1000);
+        this.startTimer();
         
-        this.showMessage('Test Started', 'You can now write your answers. Timer is running!');
+        // Start typing monitor
+        this.startTypingMonitor();
+        
+        this.showMessage('Test started! You can now begin writing.', 'success');
     }
 
-    updateTimer() {
+    startTimer() {
+        this.timer = 0;
+        this.updateTimerDisplay();
+        this.timerInterval = setInterval(() => {
+            this.timer++;
+            this.updateTimerDisplay();
+        }, 1000);
+    }
+
+    updateTimerDisplay() {
         const hours = Math.floor(this.timer / 3600).toString().padStart(2, '0');
         const minutes = Math.floor((this.timer % 3600) / 60).toString().padStart(2, '0');
         const seconds = (this.timer % 60).toString().padStart(2, '0');
         document.getElementById('timer').textContent = `${hours}:${minutes}:${seconds}`;
     }
 
-    updateWordCount(taskNumber) {
-        const textarea = document.getElementById('task' + taskNumber + 'Answer');
-        const wordCount = document.getElementById('task' + taskNumber + 'Words');
-        const text = textarea.value.trim();
-        const words = text === '' ? 0 : text.split(/\s+/).filter(word => word.length > 0).length;
-        wordCount.textContent = words;
+    updateWordCount() {
+        const text = document.getElementById('answerText').value;
+        const words = text.trim() ? text.split(/\s+/).filter(word => word.length > 0).length : 0;
+        document.getElementById('wordCount').textContent = words;
+    }
+
+    startTypingMonitor() {
+        const textarea = document.getElementById('answerText');
+        let lastKeyTime = Date.now();
+        let keyCount = 0;
+
+        textarea.addEventListener('keydown', () => {
+            const now = Date.now();
+            const timeDiff = (now - lastKeyTime) / 1000;
+            
+            if (timeDiff < 1) {
+                keyCount++;
+            } else {
+                keyCount = 1;
+            }
+            
+            lastKeyTime = now;
+
+            // Check for excessive typing speed
+            if (keyCount > this.typingMonitor.warningThreshold && timeDiff < 10) {
+                this.showCheatingWarning();
+                keyCount = 0;
+            }
+        });
+    }
+
+    showCheatingWarning() {
+        document.getElementById('cheatModal').classList.add('active');
+        document.getElementById('answerText').classList.add('typing-warning');
+        
+        setTimeout(() => {
+            document.getElementById('answerText').classList.remove('typing-warning');
+        }, 2000);
     }
 
     handleVisibilityChange() {
@@ -178,83 +330,80 @@ class IELTSApp {
                 this.showModal('warningModal');
             } else {
                 this.resetTest();
-                this.showMessage('Test Reset', 'You left the page again. Test has been reset.');
+                this.showMessage('Test reset due to multiple page visibility changes.');
             }
         }
     }
 
-    showModal(modalId) {
-        document.getElementById(modalId).classList.add('active');
-    }
+    setupSplitPanel() {
+        const container = document.getElementById('splitContainer');
+        const divider = document.getElementById('splitDivider');
+        let isResizing = false;
 
-    hideModal(modalId) {
-        document.getElementById(modalId).classList.remove('active');
-    }
+        divider.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            e.preventDefault();
+        });
 
-    resetTest() {
-        // Clear answers
-        document.getElementById('task1Answer').value = '';
-        document.getElementById('task2Answer').value = '';
-        document.getElementById('task1Words').textContent = '0';
-        document.getElementById('task2Words').textContent = '0';
-        
-        // Stop timer
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-        
-        // Reset state
-        this.isTestStarted = false;
-        this.warningShown = false;
-        this.timer = 0;
-        this.updateTimer();
-        
-        // Reset controls
-        document.getElementById('task1Answer').disabled = true;
-        document.getElementById('task2Answer').disabled = true;
-        document.getElementById('submitBtn').disabled = true;
-        document.getElementById('startTestBtn').disabled = false;
-        document.getElementById('startTestBtn').textContent = 'Start Test';
-        
-        // Show task 1
-        this.showTask(1);
-    }
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
 
-    goBackToMenu() {
-        if (this.isTestStarted && (document.getElementById('task1Answer').value.trim() || document.getElementById('task2Answer').value.trim())) {
-            if (confirm('Going back will lose your current answers. Continue?')) {
-                this.resetTest();
-                this.showScreen('menu');
-            }
-        } else {
-            this.resetTest();
-            this.showScreen('menu');
-        }
+            const containerRect = container.getBoundingClientRect();
+            const x = e.clientX - containerRect.left;
+            const percentage = (x / containerRect.width) * 100;
+
+            // Limit between 20% and 80%
+            const clampedPercentage = Math.max(20, Math.min(80, percentage));
+            
+            container.style.gridTemplateColumns = `${clampedPercentage}fr 8px 1fr`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            document.body.style.cursor = '';
+        });
+
+        // Touch support for mobile
+        divider.addEventListener('touchstart', (e) => {
+            isResizing = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isResizing) return;
+
+            const containerRect = container.getBoundingClientRect();
+            const x = e.touches[0].clientX - containerRect.left;
+            const percentage = (x / containerRect.width) * 100;
+            const clampedPercentage = Math.max(20, Math.min(80, percentage));
+            
+            container.style.gridTemplateColumns = `${clampedPercentage}fr 8px 1fr`;
+        });
+
+        document.addEventListener('touchend', () => {
+            isResizing = false;
+        });
     }
 
     async submitTest() {
-        const task1 = document.getElementById('task1Answer').value.trim();
-        const task2 = document.getElementById('task2Answer').value.trim();
-
-        if (!task1 && !task2) {
-            this.showMessage('Error', 'Please write answers for at least one task.');
+        if (!this.answers.task1.trim() && !this.answers.task2.trim()) {
+            this.showMessage('Please write answers for at least one task before submitting.');
             return;
         }
 
         try {
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = 'Submitting...';
+            this.setButtonLoading('submitBtn', true);
 
             const submission = {
                 studentName: this.studentName,
                 studentSurname: this.studentSurname,
                 timerValue: document.getElementById('timer').textContent,
                 submittedAt: new Date().toISOString(),
-                task1Question: "The charts below show the number of films produced by five countries in three years.",
-                task1Answer: task1,
-                task2Question: "It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?",
-                task2Answer: task2
+                task1Question: this.currentSet.task1.question,
+                task1Answer: this.answers.task1,
+                task2Question: this.currentSet.task2.question,
+                task2Answer: this.answers.task2
             };
 
             const response = await fetch('/api/submit', {
@@ -268,57 +417,84 @@ class IELTSApp {
             const result = await response.json();
 
             if (result.success) {
-                this.showMessage('Success', 'Your test has been submitted!', () => {
-                    this.resetTest();
-                    this.showScreen('menu');
-                });
+                this.showReviewScreen(submission);
             } else {
                 throw new Error(result.error);
             }
         } catch (error) {
-            this.showMessage('Error', 'Submission failed: ' + error.message);
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').textContent = 'Submit Test';
+            this.showMessage(`Submission failed: ${error.message}`);
+        } finally {
+            this.setButtonLoading('submitBtn', false);
         }
     }
 
-    showMessage(title, text, callback) {
-        document.getElementById('messageTitle').textContent = title;
-        document.getElementById('messageText').textContent = text;
-        this.showModal('messageModal');
+    showReviewScreen(submission) {
+        document.getElementById('finalTime').textContent = submission.timerValue;
+        document.getElementById('submitTime').textContent = new Date().toLocaleString();
+        document.getElementById('reviewAnswer1').textContent = submission.task1Answer || 'No answer provided';
+        document.getElementById('reviewAnswer2').textContent = submission.task2Answer || 'No answer provided';
         
-        const closeBtn = document.getElementById('closeMessage');
-        const closeHandler = () => {
-            this.hideModal('messageModal');
-            closeBtn.removeEventListener('click', closeHandler);
-            if (callback) callback();
-        };
+        this.showScreen('review');
+        this.resetTest();
+    }
+
+    confirmExit() {
+        if (this.isTestStarted && (this.answers.task1.trim() || this.answers.task2.trim())) {
+            if (confirm('Are you sure you want to exit? Your current progress will be lost.')) {
+                this.resetTest();
+                this.showScreen('menu');
+            }
+        } else {
+            this.resetTest();
+            this.showScreen('menu');
+        }
+    }
+
+    resetTest() {
+        // Clear data
+        this.answers = { task1: '', task2: '' };
+        this.currentTask = 1;
+        this.isTestStarted = false;
+        this.warningShown = false;
         
-        closeBtn.addEventListener('click', closeHandler);
+        // Stop timer
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+        
+        // Reset UI
+        document.getElementById('answerText').value = '';
+        document.getElementById('answerText').disabled = true;
+        document.getElementById('startTestBtn').disabled = false;
+        document.getElementById('startTestBtn').textContent = 'Start Test';
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('timer').textContent = '00:00:00';
+        
+        // Reset navigation
+        this.switchTask(1);
+    }
+
+    showModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+    }
+
+    hideModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    }
+
+    showMessage(message, type = 'info') {
+        alert(message); // Replace with custom modal if needed
+    }
+
+    setButtonLoading(buttonId, loading) {
+        const btn = document.getElementById(buttonId);
+        btn.classList.toggle('loading', loading);
+        btn.disabled = loading;
     }
 }
 
-// Start the app when page loads
-window.addEventListener('DOMContentLoaded', () => {
-    new IELTSApp();
-});
-
-// Also make sure Enter key works in login
+// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-    const nameInput = document.getElementById('studentName');
-    const surnameInput = document.getElementById('studentSurname');
-    
-    if (nameInput && surnameInput) {
-        nameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                surnameInput.focus();
-            }
-        });
-        
-        surnameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('loginBtn').click();
-            }
-        });
-    }
+    new IELTSProApp();
 });
