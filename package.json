@@ -1,19 +1,14 @@
 {
-  "name": "ielts-writing-multi-set",
+  "name": "ielts-writing-test",
   "version": "1.0.0",
-  "description": "Online IELTS Writing Answer Sheet with Multiple Sets",
+  "description": "Simple IELTS Writing Test System",
   "type": "module",
   "scripts": {
-    "dev": "vc dev",
-    "build": "echo 'No build step required for static site'"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@vercel/node": "^2.0.0"
+    "dev": "vc dev"
   },
   "engines": {
     "node": "22.x"
   },
-  "author": "IELTS Writing System",
+  "author": "IELTS Test System",
   "license": "MIT"
 }
