@@ -1,4 +1,4 @@
-// Simple IELTS Writing Test System
+// IELTS Writing Test Application
 class IELTSApp {
     constructor() {
         this.currentScreen = 'login';
@@ -13,67 +13,54 @@ class IELTSApp {
     }
 
     init() {
-        this.setupEventListeners();
+        this.bindEvents();
         this.showScreen('login');
     }
 
-    setupEventListeners() {
+    bindEvents() {
         // Login screen
-        document.getElementById('startButton').addEventListener('click', () => this.handleLogin());
+        document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
         
         // Main menu
-        document.querySelectorAll('.set-item:not(.coming-soon) button').forEach(btn => {
+        document.querySelectorAll('.start-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const setItem = e.target.closest('.set-item');
-                this.showAccessCode(setItem.dataset.set);
-            });
-        });
-
-        document.querySelectorAll('.set-item.coming-soon button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.showMessage('Coming Soon', 'This test set is currently under development and will be available soon.');
+                const setCard = e.target.closest('.set-card');
+                const setId = setCard.dataset.set;
+                this.showAccessCode(setId);
             });
         });
 
         // Access code screen
         document.getElementById('submitCode').addEventListener('click', () => this.checkAccessCode());
-        document.getElementById('backToMenu').addEventListener('click', () => this.showScreen('mainMenu'));
+        document.getElementById('backToMenu').addEventListener('click', () => this.showScreen('menu'));
         document.getElementById('accessCode').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.checkAccessCode();
         });
 
-        // Writing test screen
-        document.getElementById('startTimer').addEventListener('click', () => this.startTest());
-        document.getElementById('submitTest').addEventListener('click', () => this.submitTest());
-        document.getElementById('backToMenuFromTest').addEventListener('click', () => this.confirmBackToMenu());
+        // Test screen
+        document.getElementById('startTestBtn').addEventListener('click', () => this.startTest());
+        document.getElementById('submitBtn').addEventListener('click', () => this.submitTest());
+        document.getElementById('backToMenuTest').addEventListener('click', () => this.goBackToMenu());
 
-        // Navigation buttons
+        // Navigation
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.showTask(e.target.dataset.task);
+                const task = e.target.dataset.task;
+                this.showTask(task);
             });
         });
 
-        // Word count tracking
-        document.getElementById('task1Answer').addEventListener('input', () => this.updateWordCount('task1'));
-        document.getElementById('task2Answer').addEventListener('input', () => this.updateWordCount('task2'));
+        // Word count
+        document.getElementById('task1Answer').addEventListener('input', () => this.updateWordCount(1));
+        document.getElementById('task2Answer').addEventListener('input', () => this.updateWordCount(2));
 
-        // Modal buttons
-        document.getElementById('closeWarning').addEventListener('click', () => this.hideWarning());
-        document.getElementById('closeMessage').addEventListener('click', () => this.hideMessage());
+        // Modals
+        document.getElementById('closeWarning').addEventListener('click', () => this.hideModal('warningModal'));
+        document.getElementById('closeMessage').addEventListener('click', () => this.hideModal('messageModal'));
 
-        // Anti-cheating detection
-        document.addEventListener('visibilitychange', () => {
-            if (this.isTestStarted && document.hidden) {
-                this.handleVisibilityChange();
-            }
-        });
-
-        window.addEventListener('blur', () => {
-            if (this.isTestStarted) {
-                this.handleVisibilityChange();
-            }
-        });
+        // Anti-cheating
+        document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
+        window.addEventListener('blur', () => this.handleVisibilityChange());
     }
 
     handleLogin() {
@@ -88,29 +75,31 @@ class IELTSApp {
         this.studentName = name;
         this.studentSurname = surname;
         
-        document.getElementById('userNameDisplay').textContent = name + ' ' + surname;
+        document.getElementById('userName').textContent = name + ' ' + surname;
         document.getElementById('displayName').textContent = name + ' ' + surname;
         
-        this.showScreen('mainMenu');
+        this.showScreen('menu');
     }
 
     showAccessCode(setId) {
-        if (setId === 'set1') {
-            document.getElementById('setNameDisplay').textContent = 'Set 1 - Film Production & Family History';
-            this.showScreen('accessCodeScreen');
+        if (setId === '1') {
+            document.getElementById('setName').textContent = 'Set 1 - Film Production & Family History';
+            this.showScreen('code');
             document.getElementById('accessCode').focus();
         }
     }
 
     checkAccessCode() {
         const code = document.getElementById('accessCode').value.trim();
+        const errorElement = document.getElementById('codeError');
         
         if (code === 'versage_100') {
-            document.getElementById('displaySetName').textContent = 'Set 1 - Film Production';
-            this.showScreen('writingScreen');
-            this.resetTestState();
+            errorElement.textContent = '';
+            document.getElementById('displaySet').textContent = '1';
+            this.showScreen('test');
+            this.resetTest();
         } else {
-            document.getElementById('codeError').textContent = 'Invalid access code. Please try again.';
+            errorElement.textContent = 'Wrong code! Try: versage_100';
             document.getElementById('accessCode').focus();
             document.getElementById('accessCode').select();
         }
@@ -127,95 +116,89 @@ class IELTSApp {
         this.currentScreen = screenName;
     }
 
-    showTask(taskId) {
+    showTask(taskNumber) {
         // Hide all tasks
-        document.querySelectorAll('.task-section').forEach(task => {
+        document.querySelectorAll('.task-content').forEach(task => {
             task.classList.remove('active');
         });
         
-        // Update navigation buttons
+        // Update nav buttons
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         
         // Show selected task
-        document.getElementById(taskId).classList.add('active');
-        document.querySelector(`[data-task="${taskId}"]`).classList.add('active');
+        document.getElementById('task' + taskNumber + 'Content').classList.add('active');
+        document.querySelector(`[data-task="${taskNumber}"]`).classList.add('active');
     }
 
     startTest() {
         this.isTestStarted = true;
         this.warningShown = false;
         
-        // Enable answer fields
+        // Enable writing
         document.getElementById('task1Answer').disabled = false;
         document.getElementById('task2Answer').disabled = false;
-        document.getElementById('submitTest').disabled = false;
+        document.getElementById('submitBtn').disabled = false;
         
-        // Disable start button
-        document.getElementById('startTimer').disabled = true;
-        document.getElementById('startTimer').textContent = 'Test Running';
+        // Update start button
+        document.getElementById('startTestBtn').disabled = true;
+        document.getElementById('startTestBtn').textContent = 'Test Running';
         
         // Start timer
         this.timer = 0;
-        this.updateTimerDisplay();
+        this.updateTimer();
         this.timerInterval = setInterval(() => {
             this.timer++;
-            this.updateTimerDisplay();
+            this.updateTimer();
         }, 1000);
         
-        this.showMessage('Test Started', 'Your writing test has begun. Timer is running. Do not switch tabs or windows.');
+        this.showMessage('Test Started', 'You can now write your answers. Timer is running!');
     }
 
-    updateTimerDisplay() {
+    updateTimer() {
         const hours = Math.floor(this.timer / 3600).toString().padStart(2, '0');
         const minutes = Math.floor((this.timer % 3600) / 60).toString().padStart(2, '0');
         const seconds = (this.timer % 60).toString().padStart(2, '0');
         document.getElementById('timer').textContent = `${hours}:${minutes}:${seconds}`;
     }
 
-    updateWordCount(task) {
-        const textarea = document.getElementById(task + 'Answer');
-        const wordCount = document.getElementById(task + 'Words');
+    updateWordCount(taskNumber) {
+        const textarea = document.getElementById('task' + taskNumber + 'Answer');
+        const wordCount = document.getElementById('task' + taskNumber + 'Words');
         const text = textarea.value.trim();
         const words = text === '' ? 0 : text.split(/\s+/).filter(word => word.length > 0).length;
         wordCount.textContent = words;
     }
 
     handleVisibilityChange() {
-        if (!this.warningShown) {
-            // First warning
-            this.warningShown = true;
-            this.showWarning();
-        } else {
-            // Second violation - reset test
-            this.resetTestDueToCheating();
+        if (this.isTestStarted && (document.hidden || !document.hasFocus())) {
+            if (!this.warningShown) {
+                this.warningShown = true;
+                this.showModal('warningModal');
+            } else {
+                this.resetTest();
+                this.showMessage('Test Reset', 'You left the page again. Test has been reset.');
+            }
         }
     }
 
-    showWarning() {
-        document.getElementById('warningModal').classList.add('active');
+    showModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
     }
 
-    hideWarning() {
-        document.getElementById('warningModal').classList.remove('active');
+    hideModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
     }
 
-    resetTestDueToCheating() {
-        this.resetTestState();
-        this.showMessage('Test Reset', 'Your test has been reset because you left the page multiple times.');
-    }
-
-    resetTestState() {
+    resetTest() {
         // Clear answers
         document.getElementById('task1Answer').value = '';
         document.getElementById('task2Answer').value = '';
         document.getElementById('task1Words').textContent = '0';
         document.getElementById('task2Words').textContent = '0';
         
-        // Reset timer
-        this.timer = 0;
-        this.updateTimerDisplay();
+        // Stop timer
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
@@ -224,60 +207,54 @@ class IELTSApp {
         // Reset state
         this.isTestStarted = false;
         this.warningShown = false;
+        this.timer = 0;
+        this.updateTimer();
         
-        // Reset buttons and fields
+        // Reset controls
         document.getElementById('task1Answer').disabled = true;
         document.getElementById('task2Answer').disabled = true;
-        document.getElementById('submitTest').disabled = true;
-        document.getElementById('startTimer').disabled = false;
-        document.getElementById('startTimer').textContent = 'Start Test';
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('startTestBtn').disabled = false;
+        document.getElementById('startTestBtn').textContent = 'Start Test';
         
         // Show task 1
-        this.showTask('task1');
-    }
-
-    confirmBackToMenu() {
-        if (this.isTestStarted && (document.getElementById('task1Answer').value.trim() || document.getElementById('task2Answer').value.trim())) {
-            this.showMessage('Confirm Exit', 'If you go back to menu, your current answers and timer will be lost. Are you sure?', () => {
-                this.goBackToMenu();
-            });
-        } else {
-            this.goBackToMenu();
-        }
+        this.showTask(1);
     }
 
     goBackToMenu() {
-        this.resetTestState();
-        this.showScreen('mainMenu');
+        if (this.isTestStarted && (document.getElementById('task1Answer').value.trim() || document.getElementById('task2Answer').value.trim())) {
+            if (confirm('Going back will lose your current answers. Continue?')) {
+                this.resetTest();
+                this.showScreen('menu');
+            }
+        } else {
+            this.resetTest();
+            this.showScreen('menu');
+        }
     }
 
     async submitTest() {
-        const task1Answer = document.getElementById('task1Answer').value.trim();
-        const task2Answer = document.getElementById('task2Answer').value.trim();
+        const task1 = document.getElementById('task1Answer').value.trim();
+        const task2 = document.getElementById('task2Answer').value.trim();
 
-        if (!task1Answer && !task2Answer) {
-            this.showMessage('Error', 'Please write answers for at least one task before submitting.');
-            return;
-        }
-
-        if (!this.isTestStarted) {
-            this.showMessage('Error', 'Please start the test before submitting.');
+        if (!task1 && !task2) {
+            this.showMessage('Error', 'Please write answers for at least one task.');
             return;
         }
 
         try {
-            document.getElementById('submitTest').disabled = true;
-            document.getElementById('submitTest').textContent = 'Submitting...';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Submitting...';
 
-            const submissionData = {
+            const submission = {
                 studentName: this.studentName,
                 studentSurname: this.studentSurname,
                 timerValue: document.getElementById('timer').textContent,
                 submittedAt: new Date().toISOString(),
                 task1Question: "The charts below show the number of films produced by five countries in three years.",
-                task1Answer: task1Answer,
+                task1Answer: task1,
                 task2Question: "It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?",
-                task2Answer: task2Answer
+                task2Answer: task2
             };
 
             const response = await fetch('/api/submit', {
@@ -285,47 +262,63 @@ class IELTSApp {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(submissionData)
+                body: JSON.stringify(submission)
             });
 
             const result = await response.json();
 
             if (result.success) {
-                this.showMessage('Success', 'Your answers have been submitted successfully!', () => {
-                    this.resetTestState();
-                    this.showScreen('mainMenu');
+                this.showMessage('Success', 'Your test has been submitted!', () => {
+                    this.resetTest();
+                    this.showScreen('menu');
                 });
             } else {
                 throw new Error(result.error);
             }
         } catch (error) {
-            this.showMessage('Error', 'Failed to submit: ' + error.message);
-            document.getElementById('submitTest').disabled = false;
-            document.getElementById('submitTest').textContent = 'Submit Test';
+            this.showMessage('Error', 'Submission failed: ' + error.message);
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = 'Submit Test';
         }
     }
 
-    showMessage(title, text, callback = null) {
+    showMessage(title, text, callback) {
         document.getElementById('messageTitle').textContent = title;
         document.getElementById('messageText').textContent = text;
-        document.getElementById('messageModal').classList.add('active');
+        this.showModal('messageModal');
         
         const closeBtn = document.getElementById('closeMessage');
-        const handler = () => {
-            document.getElementById('messageModal').classList.remove('active');
-            closeBtn.removeEventListener('click', handler);
+        const closeHandler = () => {
+            this.hideModal('messageModal');
+            closeBtn.removeEventListener('click', closeHandler);
             if (callback) callback();
         };
         
-        closeBtn.addEventListener('click', handler);
-    }
-
-    hideMessage() {
-        document.getElementById('messageModal').classList.remove('active');
+        closeBtn.addEventListener('click', closeHandler);
     }
 }
 
-// Start the application when page loads
-document.addEventListener('DOMContentLoaded', () => {
+// Start the app when page loads
+window.addEventListener('DOMContentLoaded', () => {
     new IELTSApp();
+});
+
+// Also make sure Enter key works in login
+document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('studentName');
+    const surnameInput = document.getElementById('studentSurname');
+    
+    if (nameInput && surnameInput) {
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                surnameInput.focus();
+            }
+        });
+        
+        surnameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginBtn').click();
+            }
+        });
+    }
 });
