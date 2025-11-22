@@ -1,7 +1,7 @@
 {
   "name": "ielts-writing-test",
   "version": "1.0.0",
-  "description": "Simple IELTS Writing Test System",
+  "description": "IELTS Writing Test System",
   "type": "module",
   "scripts": {
     "dev": "vc dev"
@@ -9,6 +9,6 @@
   "engines": {
     "node": "22.x"
   },
-  "author": "IELTS Test System",
+  "author": "IELTS Test",
   "license": "MIT"
 }
