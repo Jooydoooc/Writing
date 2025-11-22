@@ -137,5 +137,29 @@
     </div>
 
     <script src="script.js"></script>
-</body>
+</body>    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <header class="login-header">
+                <h1>IELTS Writing Test</h1>
+                <p>Please enter your details to begin</p>
+            </header>
+
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="loginName">Student Name:</label>
+                    <input type="text" id="loginName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginSurname">Student Surname:</label>
+                    <input type="text" id="loginSurname" placeholder="Enter your surname" required>
+                </div>
+                <button id="startLoginBtn" class="btn btn-primary">Continue to Test Sets</button>
+            </div>
+
+            <div class="login-footer">
+                <p>Your information will be used for test submission and identification</p>
+            </div>
+        </div>
+    </div>
 </html>
