@@ -3,163 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Writing - Test Sets</title>
+    <title>IELTS Writing Test</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Main Menu Screen -->
-    <div id="mainMenu" class="screen active">
-        <div class="menu-container">
-            <header class="menu-header">
-                <h1>IELTS Writing – Test Sets</h1>
-                <p>Select a test set and enter the access code to begin</p>
-            </header>
-
-            <div class="sets-grid" id="setsContainer">
-                <!-- Sets will be dynamically generated -->
-            </div>
-
-            <div class="menu-footer">
-                <p>Each set requires a unique access code provided by your instructor</p>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>IELTS Writing Test</h1>
+                <p>Enter your details to start</p>
+                
+                <div class="input-group">
+                    <input type="text" id="studentName" placeholder="Your Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="studentSurname" placeholder="Your Surname" required>
+                </div>
+                
+                <button id="startButton" class="btn-primary">Start Test</button>
             </div>
         </div>
     </div>
 
-    <!-- Writing Interface Screen -->
-    <div id="writingInterface" class="screen">
-        <div class="container">
-            <!-- Top Bar -->
-            <header class="top-bar">
+    <!-- Main Menu -->
+    <div id="mainMenu" class="screen">
+        <div class="menu-container">
+            <h1>Select Test Set</h1>
+            <p>Welcome, <span id="userNameDisplay"></span></p>
+            
+            <div class="sets-list">
+                <div class="set-item active" data-set="set1">
+                    <h3>Set 1 - Film Production & Family History</h3>
+                    <p>Available Now</p>
+                    <button class="btn-primary">Start Set 1</button>
+                </div>
+                
+                <div class="set-item coming-soon" data-set="set2">
+                    <h3>Set 2 - Coming Soon</h3>
+                    <p>Under Development</p>
+                    <button class="btn-secondary" disabled>Coming Soon</button>
+                </div>
+                
+                <div class="set-item coming-soon" data-set="set3">
+                    <h3>Set 3 - Coming Soon</h3>
+                    <p>Under Development</p>
+                    <button class="btn-secondary" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Code Screen -->
+    <div id="accessCodeScreen" class="screen">
+        <div class="access-container">
+            <div class="access-box">
+                <h2>Enter Access Code</h2>
+                <p id="setNameDisplay">Set 1 - Film Production & Family History</p>
+                
+                <div class="input-group">
+                    <input type="password" id="accessCode" placeholder="Enter access code" required>
+                </div>
+                <p id="codeError" class="error-message"></p>
+                
+                <div class="button-group">
+                    <button id="submitCode" class="btn-primary">Submit Code</button>
+                    <button id="backToMenu" class="btn-secondary">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Writing Test Screen -->
+    <div id="writingScreen" class="screen">
+        <div class="test-container">
+            <!-- Header -->
+            <div class="test-header">
                 <div class="student-info">
-                    <input type="text" id="studentName" placeholder="Student Name" required>
-                    <input type="text" id="studentSurname" placeholder="Student Surname" required>
-                    <div class="set-info" id="currentSetInfo"></div>
+                    <span id="displayName"></span>
+                    <span id="displaySetName">Set 1</span>
                 </div>
                 <div class="timer-section">
-                    <div id="timerDisplay">00:00:00</div>
-                    <button id="startTestBtn" class="btn btn-primary">Start Test</button>
-                    <button id="backToMenuBtn" class="btn btn-secondary">Back to Menu</button>
+                    <div id="timer">00:00:00</div>
+                    <button id="startTimer" class="btn-primary">Start Test</button>
                 </div>
-            </header>
+            </div>
 
             <!-- Navigation -->
-            <nav class="navigation">
-                <button id="task1Btn" class="nav-btn active">Task 1</button>
-                <button id="task2Btn" class="nav-btn">Task 2</button>
-            </nav>
+            <div class="test-nav">
+                <button class="nav-btn active" data-task="task1">Task 1</button>
+                <button class="nav-btn" data-task="task2">Task 2</button>
+            </div>
 
-            <!-- Task 1 Screen -->
-            <div id="task1Screen" class="task-screen active">
-                <div class="two-column-layout">
-                    <div class="left-column">
-                        <h2>Task 1 Question</h2>
-                        <div class="question-area">
-                            <div id="task1ImageContainer"></div>
-                            <div id="task1QuestionText" class="question-text"></div>
+            <!-- Task 1 -->
+            <div id="task1" class="task-section active">
+                <div class="two-column">
+                    <div class="question-side">
+                        <h3>Task 1 Question</h3>
+                        <div class="question-content">
+                            <p><strong>The charts below show the number of films produced by five countries in three years.</strong></p>
+                            <div class="image-placeholder">
+                                [Film Production Chart: 2007-2009 data for countries A, B, C, D, E]
+                            </div>
                         </div>
                     </div>
-
-                    <div class="right-column">
-                        <h2>Task 1 Answer</h2>
-                        <textarea id="task1Answer" placeholder="Write your Task 1 answer here..." class="answer-text" disabled></textarea>
-                        <div class="word-count">Words: <span id="task1WordCount">0</span></div>
+                    
+                    <div class="answer-side">
+                        <h3>Your Answer</h3>
+                        <textarea id="task1Answer" placeholder="Write your Task 1 answer here..." disabled></textarea>
+                        <div class="word-count">Words: <span id="task1Words">0</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Task 2 Screen -->
-            <div id="task2Screen" class="task-screen">
-                <div class="two-column-layout">
-                    <div class="left-column">
-                        <h2>Task 2 Question</h2>
-                        <div class="question-area">
-                            <div id="task2ImageContainer"></div>
-                            <div id="task2QuestionText" class="question-text"></div>
+            <!-- Task 2 -->
+            <div id="task2" class="task-section">
+                <div class="two-column">
+                    <div class="question-side">
+                        <h3>Task 2 Question</h3>
+                        <div class="question-content">
+                            <p><strong>It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?</strong></p>
                         </div>
                     </div>
-
-                    <div class="right-column">
-                        <h2>Task 2 Answer</h2>
-                        <textarea id="task2Answer" placeholder="Write your Task 2 answer here..." class="answer-text" disabled></textarea>
-                        <div class="word-count">Words: <span id="task2WordCount">0</span></div>
+                    
+                    <div class="answer-side">
+                        <h3>Your Answer</h3>
+                        <textarea id="task2Answer" placeholder="Write your Task 2 answer here..." disabled></textarea>
+                        <div class="word-count">Words: <span id="task2Words">0</span></div>
                     </div>
                 </div>
                 
                 <div class="submit-section">
-                    <button id="submitTest" class="btn btn-primary" disabled>Submit Test</button>
+                    <button id="submitTest" class="btn-primary" disabled>Submit Test</button>
+                    <button id="backToMenuFromTest" class="btn-secondary">Back to Menu</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Access Code Modal -->
-    <div id="accessCodeModal" class="modal">
-        <div class="modal-content">
-            <h3 id="modalSetTitle">Enter Access Code</h3>
-            <p>Please enter the access code for this test set:</p>
-            <input type="text" id="accessCodeInput" placeholder="Enter code..." autocomplete="off">
-            <p id="accessCodeError" class="error-message"></p>
-            <div class="modal-buttons">
-                <button id="confirmCodeBtn" class="btn btn-primary">Confirm</button>
-                <button id="cancelCodeBtn" class="btn btn-secondary">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Warning Modal -->
+    <!-- Modals -->
     <div id="warningModal" class="modal">
         <div class="modal-content">
-            <h3>Warning</h3>
-            <p>You have left the test page. If you leave again, your answers will be cleared and the test will be restarted.</p>
-            <button id="modalOkBtn" class="btn btn-primary">OK</button>
+            <h3>⚠️ Warning</h3>
+            <p>You left the test page. If you leave again, your test will be reset.</p>
+            <button id="closeWarning" class="btn-primary">OK</button>
         </div>
     </div>
 
-    <!-- Message Modal -->
     <div id="messageModal" class="modal">
         <div class="modal-content">
             <h3 id="messageTitle">Message</h3>
             <p id="messageText"></p>
-            <button id="messageOkBtn" class="btn btn-primary">OK</button>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <h3>Confirm Action</h3>
-            <p id="confirmText">If you go back, your current answers and timer will be cleared.</p>
-            <div class="modal-buttons">
-                <button id="confirmYesBtn" class="btn btn-primary">Yes, Go Back</button>
-                <button id="confirmNoBtn" class="btn btn-secondary">Cancel</button>
-            </div>
+            <button id="closeMessage" class="btn-primary">OK</button>
         </div>
     </div>
 
     <script src="script.js"></script>
-</body>    <!-- Login Screen -->
-    <div id="loginScreen" class="screen active">
-        <div class="login-container">
-            <header class="login-header">
-                <h1>IELTS Writing Test</h1>
-                <p>Please enter your details to begin</p>
-            </header>
-
-            <div class="login-form">
-                <div class="form-group">
-                    <label for="loginName">Student Name:</label>
-                    <input type="text" id="loginName" placeholder="Enter your name" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginSurname">Student Surname:</label>
-                    <input type="text" id="loginSurname" placeholder="Enter your surname" required>
-                </div>
-                <button id="startLoginBtn" class="btn btn-primary">Continue to Test Sets</button>
-            </div>
-
-            <div class="login-footer">
-                <p>Your information will be used for test submission and identification</p>
-            </div>
-        </div>
-    </div>
+</body>
 </html>
