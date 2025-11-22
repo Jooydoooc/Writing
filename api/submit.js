@@ -47,7 +47,7 @@ export default async function handler(request, response) {
         }
 
         // Format the message for Telegram
-        const message = this.formatTelegramMessage(data);
+        const message = formatTelegramMessage(data);
 
         // Send message to Telegram
         const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
