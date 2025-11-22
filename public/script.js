@@ -10,35 +10,19 @@
 
 const WRITING_SETS = {
     set1: {
-        name: "Set 1 – Education Trends",
-        code: "EDU2024",
-        task1QuestionText: "The charts below show the percentage of students choosing different university subjects in the UK between 1990 and 2010.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-        task1ImageUrl: null,
-        task2QuestionText: "Some people believe that students should be required to take physical education classes throughout their entire school career. Others think that it is more important to focus on academic subjects.\n\nDiscuss both views and give your own opinion.",
+        name: "Set 1 – Film Production & Family History",
+        code: "versage_100",
+        task1QuestionText: "The charts below show the number of films produced by five countries in three years.",
+        task1ImageUrl: "/images/film-production-chart.jpg",
+        task2QuestionText: "It is becoming increasingly popular to try to find out the history of one's own family. Why might people want to do this? Is it a positive or negative development?",
         task2ImageUrl: null
     },
     set2: {
-        name: "Set 2 – Environmental Issues",
-        code: "ENV2024",
-        task1QuestionText: "The graph below shows the average carbon dioxide emissions per person in four different countries from 1960 to 2010.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+        name: "Set 2 – Education Trends",
+        code: "versage_99",
+        task1QuestionText: "The charts below show the percentage of students choosing different university subjects in the UK between 1990 and 2010.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
         task1ImageUrl: null,
-        task2QuestionText: "Some people think that the best way to reduce environmental problems is to increase the cost of fuel for cars and other vehicles.\n\nTo what extent do you agree or disagree with this statement?",
-        task2ImageUrl: null
-    },
-    set3: {
-        name: "Set 3 – Technology Impact",
-        code: "TECH2024",
-        task1QuestionText: "The diagram below shows how solar panels can be used to provide electricity for domestic use.\n\nWrite a report for a university lecturer describing the information shown below.",
-        task1ImageUrl: null,
-        task2QuestionText: "With the development of technology, children are now living in a world that is completely different from what it was 50 years ago.\n\nWhat problems can this cause for society and the family?",
-        task2ImageUrl: null
-    },
-    set4: {
-        name: "Set 4 – Global Tourism",
-        code: "TOUR2024",
-        task1QuestionText: "The table below gives information about the number of visitors to three different museums in London before and after they introduced free admission in 2001.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-        task1ImageUrl: null,
-        task2QuestionText: "International tourism has become a huge industry in the world. Some people think that the problems caused by international tourism outweigh the benefits.\n\nTo what extent do you agree or disagree?",
+        task2QuestionText: "Some people believe that students should be required to take physical education classes throughout their entire school career. Others think that it is more important to focus on academic subjects.\n\nDiscuss both views and give your own opinion.",
         task2ImageUrl: null
     }
 };
@@ -52,22 +36,29 @@ class IELTSTest {
         this.currentScreen = 'task1';
         this.currentSetId = null;
         this.currentSet = null;
+        this.studentName = '';
+        this.studentSurname = '';
         
         this.initializeElements();
         this.attachEventListeners();
         this.setupVisibilityChangeHandler();
-        this.renderMainMenu();
     }
 
     initializeElements() {
         // Screens
+        this.loginScreen = document.getElementById('loginScreen');
         this.mainMenu = document.getElementById('mainMenu');
         this.writingInterface = document.getElementById('writingInterface');
         this.setsContainer = document.getElementById('setsContainer');
 
+        // Login elements
+        this.loginName = document.getElementById('loginName');
+        this.loginSurname = document.getElementById('loginSurname');
+        this.startLoginBtn = document.getElementById('startLoginBtn');
+
         // Student info and timer
-        this.studentName = document.getElementById('studentName');
-        this.studentSurname = document.getElementById('studentSurname');
+        this.studentNameDisplay = document.getElementById('studentNameDisplay');
+        this.studentSurnameDisplay = document.getElementById('studentSurnameDisplay');
         this.currentSetInfo = document.getElementById('currentSetInfo');
         this.timerDisplay = document.getElementById('timerDisplay');
         this.startTestBtn = document.getElementById('startTestBtn');
@@ -114,6 +105,15 @@ class IELTSTest {
     }
 
     attachEventListeners() {
+        // Login
+        this.startLoginBtn.addEventListener('click', () => this.handleLogin());
+        this.loginName.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.handleLogin();
+        });
+        this.loginSurname.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.handleLogin();
+        });
+
         // Navigation
         this.task1Btn.addEventListener('click', () => this.showScreen('task1'));
         this.task2Btn.addEventListener('click', () => this.showScreen('task2'));
@@ -159,6 +159,25 @@ class IELTSTest {
         });
     }
 
+    handleLogin() {
+        const name = this.loginName.value.trim();
+        const surname = this.loginSurname.value.trim();
+
+        if (!name || !surname) {
+            this.showMessage('Error', 'Please enter both your name and surname to continue.');
+            return;
+        }
+
+        this.studentName = name;
+        this.studentSurname = surname;
+        this.studentNameDisplay.textContent = name;
+        this.studentSurnameDisplay.textContent = surname;
+
+        this.loginScreen.classList.remove('active');
+        this.mainMenu.classList.add('active');
+        this.renderMainMenu();
+    }
+
     /**
      * Renders the main menu with all available sets from WRITING_SETS
      */
@@ -171,7 +190,8 @@ class IELTSTest {
             setCard.innerHTML = `
                 <h3>${setData.name}</h3>
                 <div class="set-id">ID: ${setId}</div>
-                <p>${setData.task2QuestionText.substring(0, 100)}...</p>
+                <p><strong>Task 1:</strong> ${setData.task1QuestionText.substring(0, 80)}...</p>
+                <p><strong>Task 2:</strong> ${setData.task2QuestionText.substring(0, 80)}...</p>
                 <button class="start-set-btn" data-set="${setId}">Start This Set</button>
             `;
             this.setsContainer.appendChild(setCard);
@@ -227,9 +247,11 @@ class IELTSTest {
             img.alt = "Task 1 Question Image";
             img.className = 'question-image';
             img.onerror = () => {
-                this.task1ImageContainer.innerHTML = '<p class="error-message">Image not found: ' + this.currentSet.task1ImageUrl + '</p>';
+                this.task1ImageContainer.innerHTML = '<p class="image-placeholder">[Chart: Number of films produced by five countries in three years (2007-2009)]</p>';
             };
             this.task1ImageContainer.appendChild(img);
+        } else {
+            this.task1ImageContainer.innerHTML = '<p class="image-placeholder">[Visual data would be displayed here]</p>';
         }
         this.task1QuestionText.textContent = this.currentSet.task1QuestionText;
 
@@ -241,7 +263,7 @@ class IELTSTest {
             img.alt = "Task 2 Question Image";
             img.className = 'question-image';
             img.onerror = () => {
-                this.task2ImageContainer.innerHTML = '<p class="error-message">Image not found: ' + this.currentSet.task2ImageUrl + '</p>';
+                this.task2ImageContainer.innerHTML = '<p class="image-placeholder">[Image not available]</p>';
             };
             this.task2ImageContainer.appendChild(img);
         }
@@ -283,16 +305,9 @@ class IELTSTest {
     }
 
     startTest() {
-        if (!this.studentName.value.trim() || !this.studentSurname.value.trim()) {
-            this.showMessage('Error', 'Please enter your name and surname before starting the test.');
-            return;
-        }
-
         this.isTestStarted = true;
         this.warningGiven = false;
         this.startTestBtn.disabled = true;
-        this.studentName.readOnly = true;
-        this.studentSurname.readOnly = true;
         this.task1Answer.disabled = false;
         this.task2Answer.disabled = false;
         this.submitTest.disabled = false;
@@ -377,8 +392,6 @@ class IELTSTest {
         this.isTestStarted = false;
         this.warningGiven = false;
         this.startTestBtn.disabled = false;
-        this.studentName.readOnly = false;
-        this.studentSurname.readOnly = false;
         this.task1Answer.disabled = true;
         this.task2Answer.disabled = true;
         this.submitTest.disabled = true;
@@ -386,11 +399,6 @@ class IELTSTest {
 
     async submitAnswers() {
         // Validation
-        if (!this.studentName.value.trim() || !this.studentSurname.value.trim()) {
-            this.showMessage('Error', 'Please enter your name and surname.');
-            return;
-        }
-
         if (!this.task1Answer.value.trim() && !this.task2Answer.value.trim()) {
             this.showMessage('Error', 'Please provide answers for at least one task.');
             return;
@@ -403,8 +411,8 @@ class IELTSTest {
 
         // Prepare submission data
         const submissionData = {
-            studentName: this.studentName.value.trim(),
-            studentSurname: this.studentSurname.value.trim(),
+            studentName: this.studentName,
+            studentSurname: this.studentSurname,
             setId: this.currentSetId,
             setName: this.currentSet.name,
             timerValue: this.timerDisplay.textContent,
